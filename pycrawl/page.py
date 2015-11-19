@@ -165,9 +165,9 @@ def extract_images(bs4, lazy_image_attribute=None):
     """
 
     if lazy_image_attribute:
-        return [image[lazy_image_attribute] for image in bs4.select('img') if image.has_attr[lazy_image_attribute]]
+        return [image[lazy_image_attribute] for image in bs4.select('img') if image.has_attr(lazy_image_attribute)]
     else:
-        return [image['src'] for image in bs4.select('img') if image.has_attr['src']]
+        return [image['src'] for image in bs4.select('img') if image.has_attr('src')]
 
 
 def extract_canonical(bs4):
