@@ -33,21 +33,15 @@ def extract_favicon(bs4):
 
     favicon = []
 
-    icon = bs4.select('link[rel="shortcut icon"]')
+    icons = bs4.select('link[rel="icon"]')
 
-    if icon:
+    if icons:
 
-        if icon.has_attr('href'):
+        for icon in icons:
 
-            favicon.append(icon['href'])
+            if icon.has_attr('href'):
 
-    icon = bs4.select('link[rel="icon"]')
-
-    if icon:
-
-        if icon.has_attr('href'):
-
-            favicon.append(icon['href'])
+                favicon.append(icon['href'])
 
     return favicon
 
@@ -116,7 +110,7 @@ def extract_resource_links(bs4):
 
     return [anchor['href'] for anchor in bs4.select('a[href]')
             if anchor.has_attr('href')
-            if anchor['href'].endswith('.js') or anchor['href'].endswith['.css']]
+            if anchor['href'].endswith('.js') or anchor['href'].endswith('.css')]
 
 
 def extract_css_links(bs4):
@@ -128,7 +122,7 @@ def extract_css_links(bs4):
 
     return [anchor['href'] for anchor in bs4.select('a[href]')
             if anchor.has_attr('href')
-            if anchor['href'].endswith['.css']]
+            if anchor['href'].endswith('.css')]
 
 
 def extract_js_links(bs4):
@@ -140,7 +134,7 @@ def extract_js_links(bs4):
 
     return [anchor['href'] for anchor in bs4.select('a[href]')
             if anchor.has_attr('href')
-            if anchor['href'].endswith['.js']]
+            if anchor['href'].endswith('.js')]
 
 
 def extract_images(bs4, lazy_image_attribute=None):
