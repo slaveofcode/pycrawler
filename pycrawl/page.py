@@ -248,7 +248,7 @@ class Page:
             self._content = ContentExtractor.extract(
                 html=str(self.__bs4),
                 extractor_type=ContentExtractor.EXTRACTOR_ARTICLE
-            )
+            ).getText()
 
         return self._content
 
