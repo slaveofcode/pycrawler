@@ -159,7 +159,7 @@ def extract_images(bs4, lazy_image_attribute=None):
 
 class Page:
 
-    def __init__(self, url, content):
+    def __init__(self, content, url=None):
 
         self.__url = url
 
@@ -264,7 +264,7 @@ class Page:
     @property
     def original_links(self):
 
-        if not self._original_links:
+        if not self._original_links and self.__url:
 
             self._original_links = extract_original_links(self.__url, self.__bs4)
 
