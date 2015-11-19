@@ -1,6 +1,13 @@
 # Pycrawler
 A Python crawler tool to grab page(s) information from their html data or web url
 
+# Installation
+
+You can install this lib directly from github repository by execute 
+
+    # Install from last stable release
+    
+    pip install git+ssh://git@github.com/slaveofcode/pycrawler@master
 
 # How To Use?
 
