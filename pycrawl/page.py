@@ -61,17 +61,18 @@ def extract_metas(bs4):
 
         meta_content = {}
 
-        if meta.has_attr('name'):
-            meta_content.update({'name': meta['name']})
+        meta_attrs = [
+            'charset',
+            'name',
+            'content',
+            'property',
+            'http-equiv',
+            'itemprop'
+        ]
 
-        if meta.has_attr('content'):
-            meta_content.update({'content': meta['content']})
-
-        if meta.has_attr('charset'):
-            meta_content.update({'charset': meta['charset']})
-
-        if meta.has_attr('http-equiv'):
-            meta_content.update({'http-equiv': meta['http-equiv']})
+        for attr in meta_attrs:
+            if meta.has_attr(attr):
+                meta_content.update({attr: meta[attr]})
 
         meta_tags.append(meta_content)
 
@@ -151,6 +152,24 @@ def extract_images(bs4, lazy_image_attribute=None):
         return [image['src'] for image in bs4.select('img') if image.has_attr['src']]
 
 
+def extract_canonical(bs4):
+    """Extracting canonical url
+
+    :param bs4:
+    :return:
+    """
+
+    link_rel = bs4.select('link[rel="canonical"]')
+
+    if link_rel.__len__() > 0:
+
+        if link_rel[0].has_attr('href'):
+
+            return link_rel[0]['href']
+
+    return None
+
+
 class Page:
 
     def __init__(self, content, url=None):
@@ -162,6 +181,8 @@ class Page:
         self.__bs4 = BeautifulSoup(content, 'html.parser')
 
         self._encoding = None
+
+        self._canonical_url = None
 
         self._title = None
 
@@ -191,6 +212,15 @@ class Page:
             self._encoding = self.__bs4.original_encoding
 
         return self._encoding
+
+    @property
+    def canonical_url(self):
+
+        if not self._canonical_url:
+
+            self._canonical_url = extract_canonical(self.__bs4)
+
+        return self._canonical_url
 
     @property
     def title(self):
