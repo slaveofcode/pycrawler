@@ -43,6 +43,16 @@ def extract_favicon(bs4):
 
                 favicon.append(icon['href'])
 
+    icons = bs4.select('link[rel^="shortcut"]')  # begins with "shortcut" to grab "shortcut icon"
+
+    if icons:
+
+        for icon in icons:
+
+            if icon.has_attr('href'):
+
+                favicon.append(icon['href'])
+
     return favicon
 
 
@@ -102,18 +112,6 @@ def extract_original_links(base_url, bs4):
             if anchor['href'].startswith(base_url)]
 
 
-def extract_resource_links(bs4):
-    """Extracting resource links such as .js and .css from BeautifulSoup object
-
-    :param bs4: `BeautifulSoup`
-    :return: `list` List of links
-    """
-
-    return [anchor['href'] for anchor in bs4.select('a[href]')
-            if anchor.has_attr('href')
-            if anchor['href'].endswith('.js') or anchor['href'].endswith('.css')]
-
-
 def extract_css_links(bs4):
     """Extracting css links from BeautifulSoup object
 
@@ -121,9 +119,14 @@ def extract_css_links(bs4):
     :return: `list` List of links
     """
 
-    return [anchor['href'] for anchor in bs4.select('a[href]')
-            if anchor.has_attr('href')
-            if anchor['href'].endswith('.css')]
+    real_css = [anchor['href'] for anchor in bs4.select('a[href]')
+                if anchor.has_attr('href')
+                if anchor['href'].endswith('.css')]
+
+    css_link_tags = [anchor['href'] for anchor in bs4.select('link[type="text/css"]')
+                     if anchor.has_attr('href')]
+
+    return list(set(real_css+css_link_tags))
 
 
 def extract_js_links(bs4):
@@ -133,9 +136,24 @@ def extract_js_links(bs4):
     :return: `list` List of links
     """
 
-    return [anchor['href'] for anchor in bs4.select('a[href]')
-            if anchor.has_attr('href')
-            if anchor['href'].endswith('.js')]
+    real_js = [anchor['href'] for anchor in bs4.select('a[href]')
+               if anchor.has_attr('href')
+               if anchor['href'].endswith('.js')]
+
+    js_tags = [anchor['src'] for anchor in bs4.select('script[type="text/javascript"]')
+               if anchor.has_attr('src')]
+
+    return list(set(real_js+js_tags))
+
+
+def extract_resource_links(bs4):
+    """Extracting resource links such as .js and .css from BeautifulSoup object
+
+    :param bs4: `BeautifulSoup`
+    :return: `list` List of resource links
+    """
+
+    return extract_js_links(bs4) + extract_css_links(bs4)
 
 
 def extract_images(bs4, lazy_image_attribute=None):
