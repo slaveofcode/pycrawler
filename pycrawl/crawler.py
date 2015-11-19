@@ -36,7 +36,7 @@ class Crawler:
 
         content = HttpRequest.get(url)
 
-        return Page(content)
+        return Page(content, url=url)
 
     @classmethod
     def from_file(cls, abs_path):
