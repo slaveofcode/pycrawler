@@ -13,7 +13,7 @@ You can install this lib directly from github repository by execute
 
 First of all you must installed java runtime machine to get the boilerpipe works, because it's depends on java machine.
 
-    from pycrawl.crawler import Crawler
+    from pycrawler.crawler import Crawler
     
     page = Crawler.grab('http://www.pasarpanda.com')
     
