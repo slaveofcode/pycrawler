@@ -3,6 +3,10 @@ from requests.exceptions import ConnectionError, MissingSchema
 from http.client import OK
 
 
+class UrlNotValidException(ConnectionError):
+    pass
+
+
 class HttpRequest:
 
     @classmethod
@@ -13,6 +17,6 @@ class HttpRequest:
         except MissingSchema:
             response = requests.get('http://{}'.format(url))
         except ConnectionError:
-            pass
+            raise UrlNotValidException('Your page url is not valid bro!')
 
         return response.text if response.status_code == OK else ''
