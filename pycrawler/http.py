@@ -13,6 +13,6 @@ class HttpRequest:
         except MissingSchema:
             response = requests.get('http://{}'.format(url))
         except ConnectionError:
-            return ''
+            pass
 
         return response.text if response.status_code == OK else ''
