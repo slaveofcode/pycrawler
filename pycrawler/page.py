@@ -1,3 +1,5 @@
+import re
+from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from boilerpipe.extract import Extractor
 
@@ -102,6 +104,23 @@ def extract_metas(bs4):
     return meta_tags
 
 
+def convert_invalid_url(url):
+    """Convert invalid url with adding extra 'http://' schema into it
+
+    :param url:
+    :return:
+    """
+    regex_valid_url = re.compile(
+        r'^(?:http|ftp)s?://' # http:// or https://
+        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
+        r'localhost|' #localhost...
+        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
+        r'(?::\d+)?' # optional port
+        r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+
+    return url if regex_valid_url.match(url) else 'http://{}'.format(url)
+
+
 def extract_links(bs4):
     """Extracting links from BeautifulSoup object
 
@@ -111,7 +130,11 @@ def extract_links(bs4):
 
     unique_links = list(set([anchor['href'] for anchor in bs4.select('a[href]') if anchor.has_attr('href')]))
 
-    return [link for link in unique_links if link != '#']
+    # remove irrelevant link
+    unique_links = [link for link in unique_links if link != '#']
+
+    # convert invalid link with adding 'http' schema
+    return [convert_invalid_url(link) for link in unique_links]
 
 
 def extract_original_links(base_url, bs4):
@@ -121,10 +144,15 @@ def extract_original_links(base_url, bs4):
     :param bs4: `BeautifulSoup`
     :return: `list` List of links
     """
+    valid_url = convert_invalid_url(base_url)
 
-    return [anchor['href'] for anchor in bs4.select('a[href]')
-            if anchor.has_attr('href')
-            if anchor['href'].startswith(base_url)]
+    url = urlparse(valid_url)
+
+    base_url = '{}://{}'.format(url.scheme, url.netloc)
+
+    links = extract_links(bs4)
+
+    return [anchor for anchor in links if anchor.startswith(base_url)]
 
 
 def extract_css_links(bs4):
@@ -134,9 +162,9 @@ def extract_css_links(bs4):
     :return: `list` List of links
     """
 
-    real_css = [anchor['href'] for anchor in bs4.select('a[href]')
-                if anchor.has_attr('href')
-                if anchor['href'].endswith('.css')]
+    links = extract_links(bs4)
+
+    real_css = [anchor for anchor in links if anchor.endswith('.css')]
 
     css_link_tags = [anchor['href'] for anchor in bs4.select('link[type="text/css"]')
                      if anchor.has_attr('href')]
@@ -151,9 +179,9 @@ def extract_js_links(bs4):
     :return: `list` List of links
     """
 
-    real_js = [anchor['href'] for anchor in bs4.select('a[href]')
-               if anchor.has_attr('href')
-               if anchor['href'].endswith('.js')]
+    links = extract_links(bs4)
+
+    real_js = [anchor for anchor in links if anchor.endswith('.js')]
 
     js_tags = [anchor['src'] for anchor in bs4.select('script[type="text/javascript"]')
                if anchor.has_attr('src')]
