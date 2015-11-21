@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/slaveofcode/pycrawler.svg?branch=master)](https://travis-ci.org/slaveofcode/pycrawl) [![GitHub license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/slaveofcode/pycrawler/blob/master/LICENSE)
+[![Build Status](https://travis-ci.org/slaveofcode/pycrawler.svg?branch=master)](https://travis-ci.org/slaveofcode/pycrawler) [![GitHub license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/slaveofcode/pycrawler/blob/master/LICENSE)
 
 # Pycrawler
 A Python crawler tool to grab page(s) information from their html data or web url. 
