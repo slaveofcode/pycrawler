@@ -25,6 +25,7 @@ class ContentExtractor:
         """
         return Extractor(extractor=extractor_type, html=html)
 
+
 def extract_encoding(bs4):
     encoding = bs4.original_encoding
 
@@ -170,7 +171,7 @@ def extract_css_links(bs4):
 
     links = extract_links(bs4)
 
-    real_css = [anchor for anchor in links if anchor.endswith('.css')]
+    real_css = [anchor for anchor in links if anchor.endswith(('.css', '.CSS'))]
 
     css_link_tags = [anchor['href'] for anchor in bs4.select('link[type="text/css"]')
                      if anchor.has_attr('href')]
@@ -187,7 +188,7 @@ def extract_js_links(bs4):
 
     links = extract_links(bs4)
 
-    real_js = [anchor for anchor in links if anchor.endswith('.js')]
+    real_js = [anchor for anchor in links if anchor.endswith(('.js', '.JS'))]
 
     js_tags = [anchor['src'] for anchor in bs4.select('script[type="text/javascript"]')
                if anchor.has_attr('src')]
@@ -213,10 +214,24 @@ def extract_images(bs4, lazy_image_attribute=None):
     :return:
     """
 
+    # get images form 'img' tags
     if lazy_image_attribute:
-        return [image[lazy_image_attribute] for image in bs4.select('img') if image.has_attr(lazy_image_attribute)]
+
+        images = [image[lazy_image_attribute] for image in bs4.select('img') if image.has_attr(lazy_image_attribute)]
+
     else:
-        return [image['src'] for image in bs4.select('img') if image.has_attr('src')]
+
+        images = [image['src'] for image in bs4.select('img') if image.has_attr('src')]
+
+    # get images from detected links
+    image_links = [link for link in extract_links(bs4) if link.endswith(('.jpg', '.JPG', '.png', '.PNG', '.gif', '.GIF'))]
+
+    # get images from meta content
+    image_metas = [meta['content'] for meta in extract_metas(bs4)
+                   if 'content' in meta
+                   if meta['content'].endswith(('.jpg', '.JPG', '.png', '.PNG', '.gif', '.GIF'))]
+
+    return list(set(images + image_links + image_metas))
 
 
 def extract_canonical(bs4):
