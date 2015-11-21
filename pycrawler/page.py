@@ -150,9 +150,15 @@ def extract_original_links(base_url, bs4):
 
     base_url = '{}://{}'.format(url.scheme, url.netloc)
 
+    base_url_with_www = '{}://www.{}'.format(url.scheme, url.netloc)
+
     links = extract_links(bs4)
 
-    return [anchor for anchor in links if anchor.startswith(base_url)]
+    result_links = [anchor for anchor in links if anchor.startswith(base_url)]
+
+    result_links_www = [anchor for anchor in links if anchor.startswith(base_url_with_www)]
+
+    return list(set(result_links + result_links_www))
 
 
 def extract_css_links(bs4):
