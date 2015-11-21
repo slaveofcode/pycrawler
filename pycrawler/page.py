@@ -23,6 +23,18 @@ class ContentExtractor:
         """
         return Extractor(extractor=extractor_type, html=html)
 
+def extract_encoding(bs4):
+    encoding = bs4.original_encoding
+
+    if not encoding:
+        # Find encoding from meta charset
+        charset = bs4.select('meta[charset]')
+
+        if charset.__len__() > 0:
+            encoding = charset[0]['charset']
+
+    return encoding
+
 
 def extract_favicon(bs4):
     """Extracting favicon url from BeautifulSoup object
@@ -33,25 +45,26 @@ def extract_favicon(bs4):
 
     favicon = []
 
-    icons = bs4.select('link[rel="icon"]')
+    selectors = [
+        'link[rel="icon"]',
+        'link[rel="Icon"]',
+        'link[rel="ICON"]',
+        'link[rel^="shortcut"]',
+        'link[rel^="Shortcut"]',
+        'link[rel^="SHORTCUT"]'
+    ]
 
-    if icons:
+    for selector in selectors:
 
-        for icon in icons:
+        icons = bs4.select(selector)
 
-            if icon.has_attr('href'):
+        if icons:
 
-                favicon.append(icon['href'])
+            for icon in icons:
 
-    icons = bs4.select('link[rel^="shortcut"]')  # begins with "shortcut" to grab "shortcut icon"
+                if icon.has_attr('href'):
 
-    if icons:
-
-        for icon in icons:
-
-            if icon.has_attr('href'):
-
-                favicon.append(icon['href'])
+                    favicon.append(icon['href'])
 
     return favicon
 
@@ -227,7 +240,7 @@ class Page:
 
         if not self._encoding:
 
-            self._encoding = self.__bs4.original_encoding
+            self._encoding = extract_encoding(self.__bs4)
 
         return self._encoding
 
