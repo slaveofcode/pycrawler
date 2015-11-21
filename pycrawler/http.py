@@ -7,6 +7,9 @@ class HttpRequest:
     @classmethod
     def get(cls, url):
 
-        response = requests.get(url)
+        try:
+            response = requests.get(url)
+        except ConnectionError:
+            return ''
 
         return response.text if response.status_code == OK else ''
