@@ -109,7 +109,7 @@ def extract_links(bs4):
     :return: `list` List of links
     """
 
-    return [anchor['href'] for anchor in bs4.select('a[href]') if anchor.has_attr('href')]
+    return list(set([anchor['href'] for anchor in bs4.select('a[href]') if anchor.has_attr('href')]))
 
 
 def extract_original_links(base_url, bs4):
