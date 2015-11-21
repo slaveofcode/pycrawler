@@ -1,4 +1,5 @@
 import requests
+from requests.exceptions import ConnectionError, MissingSchema
 from http.client import OK
 
 
@@ -9,6 +10,8 @@ class HttpRequest:
 
         try:
             response = requests.get(url)
+        except MissingSchema:
+            response = requests.get('http://{}'.format(url))
         except ConnectionError:
             return ''
 
