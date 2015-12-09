@@ -2,12 +2,12 @@ from setuptools import setup
 setup(
   name='PyCrawler3',
   packages=['pycrawler'],  # must be filled with your python directories
-  version='1.2.0',
+  version='1.2.1',
   description='A Python crawler tool to grab page(s) information from html data. This only support Python 3',
   author='Aditya Kresna Permana',
   author_email='zeandcode@gmail.com',
   url='https://github.com/slaveofcode/pycrawler',
-  download_url='https://github.com/slaveofcode/pycrawler/archive/v1.2.0.zip',
+  download_url='https://github.com/slaveofcode/pycrawler/archive/v1.2.1.zip',
   install_requires=[
       'JPype1==0.6.1',
       'JPype1-py3==0.5.5.2',
