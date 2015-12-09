@@ -403,6 +403,11 @@ class Page:
 
         return self._css_links
 
+    @property
+    def bs4(self):
+
+        return self.__bs4
+
     def images(self, lazy_attr=None):
         """Get Images url
 
@@ -437,3 +442,10 @@ class Page:
             if result.__len__() > 1 else \
             result[0].get_text() if result.__len__() > 0 else None
 
+    def raw(self, selector):
+        """Return a beautifulsoup result object by given css selector
+
+        :param selector:
+        :return:
+        """
+        return self.__bs4.select(selector)
