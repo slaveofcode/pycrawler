@@ -14,7 +14,7 @@ setup(
       'beautifulsoup4==4.4.1',
       'boilerpipe-py3==1.2.0.0',
       'charade==1.0.3',
-      'requests==2.8.1'
+      'requests==2.20.0'
   ],
   keywords=[
       'crawler',
